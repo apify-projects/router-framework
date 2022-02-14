@@ -1,0 +1,45 @@
+import defineHook from './define-hook';
+import defineDataValidator from './define-data-validator';
+import defineRoute from './define-route';
+import defineStore from './define-store';
+import Router from '../router';
+import { HOOK } from '../consts';
+import { craftUID, craftUIDKey, arrayToKeyedObject, randomNumberBetween } from '../common/utils';
+declare const defineHookRouterStarted: typeof import("./hooks").ROUTER_STARTED;
+declare const defineHookRouterEnded: typeof import("./hooks").ROUTER_ENDED;
+declare const defineHookRouteStarted: typeof import("./hooks").ROUTE_STARTED;
+declare const defineHookRouteEnded: typeof import("./hooks").ROUTE_ENDED;
+declare const defineHookRouteFailed: typeof import("./hooks").ROUTE_FAILED;
+declare const defineHookQueueStarted: typeof import("./hooks").QUEUE_STARTED;
+declare const defineHookQueueEnded: typeof import("./hooks").QUEUE_ENDED;
+export { Router, defineStore, defineHook, defineDataValidator, defineRoute, defineHookRouterStarted, defineHookRouterEnded, defineHookRouteStarted, defineHookRouteEnded, defineHookRouteFailed, defineHookQueueStarted, defineHookQueueEnded, HOOK, craftUID, craftUIDKey, arrayToKeyedObject, randomNumberBetween, };
+declare const _default: {
+    Router: typeof Router;
+    defineStore: typeof defineStore;
+    defineHook: typeof defineHook;
+    defineDataValidator: typeof defineDataValidator;
+    defineRoute: typeof defineRoute;
+    defineHookRouterStarted: typeof import("./hooks").ROUTER_STARTED;
+    defineHookRouterEnded: typeof import("./hooks").ROUTER_ENDED;
+    defineHookRouteStarted: typeof import("./hooks").ROUTE_STARTED;
+    defineHookRouteEnded: typeof import("./hooks").ROUTE_ENDED;
+    defineHookRouteFailed: typeof import("./hooks").ROUTE_FAILED;
+    defineHookQueueStarted: typeof import("./hooks").QUEUE_STARTED;
+    defineHookQueueEnded: typeof import("./hooks").QUEUE_ENDED;
+    HOOK: {
+        ROUTE_STARTED: string;
+        ROUTE_ENDED: string;
+        ROUTE_FAILED: string;
+        ROUTER_STARTED: string;
+        ROUTER_ENDED: string;
+        QUEUE_STARTED: string;
+        QUEUE_ENDED: string;
+    };
+    craftUID: () => string;
+    craftUIDKey: () => string;
+    arrayToKeyedObject: (arr: any[]) => any;
+    randomNumberBetween: (min: number, max: number) => number;
+    resolveUrl: (path: string, url: string) => string | void;
+};
+export default _default;
+//# sourceMappingURL=main.d.ts.map
