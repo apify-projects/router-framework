@@ -2,23 +2,28 @@
   "name": "@apify-projects/router-framework",
   "version": "0.1.0",
   "description": "Router-based framework for multi-site scraper flow management",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apify-projects/router-framework"
+  },
+  "publishConfig": {
+    "@apify-projects:registry": "https://npm.pkg.github.com"
+  },
   "source": "src/api/main.ts",
   "main": "dist/api/main.js",
   "dependencies": {
-    "@types/cheerio": "^0.22.30",
     "@types/node": "^16.11.10",
     "apify": "^2.2.2",
-    "cheerio": "^1.0.0-rc.10",
     "debounce-async": "^0.0.2",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "nanoid": "^3.2.0",
     "observable-slim": "^0.1.5",
-    "playwright": "^1.18.1",
-    "playwright-core": "^1.18.1",
+    "playwright": "^1.19.0",
+    "playwright-core": "^1.19.0",
     "pluralize": "^8.0.0",
-    "puppeteer": "*"
+    "puppeteer": "^13.3.2"
   },
   "devDependencies": {
     "@apify/eslint-config-ts": "^0.2.3",
@@ -31,6 +36,10 @@
     "rimraf": "^3.0.2",
     "ts-node": "^10.5.0",
     "typescript": "^4.5.2"
+  },
+  "peerDependencies": {
+    "playwright": "^1.11.0",
+    "puppeteer": "^9.0.0||^10.0.0"
   },
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.json --outDir dist",

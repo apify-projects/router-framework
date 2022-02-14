@@ -1,4 +1,4 @@
-export declare const craftUID: () => string;
+export declare const craftUID: (size?: number) => string;
 export declare const craftUIDKey: () => string;
 export declare const arrayToKeyedObject: (arr: any[]) => any;
 export declare const keyedObjectToArray: (keyedObject: Record<string, any>) => any;

@@ -35,7 +35,7 @@ declare const _default: {
         QUEUE_STARTED: string;
         QUEUE_ENDED: string;
     };
-    craftUID: () => string;
+    craftUID: (size?: number) => string;
     craftUIDKey: () => string;
     arrayToKeyedObject: (arr: any[]) => any;
     randomNumberBetween: (min: number, max: number) => number;
