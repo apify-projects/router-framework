@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ObservableSlim from 'observable-slim';
 import EventEmitter from 'events';
-import getByKey from 'lodash.get';
 import { StoreOptions, WatcherFunction } from './common/types';
 import Store from './store';
 import { craftUID } from './common/utils';
@@ -21,18 +20,17 @@ export default class ObservableStore extends Store {
     override _wrapStorage(storage: Record<string, any>): Record<string, any> {
         return ObservableSlim.create(storage, false, (changes: any[]) => {
             const watchersPaths = Object.keys(this._watchersKeyByPath);
-            const pathsToFire = new Set<string>();
+            const pathsToFire = new Map<string, any>();
 
             for (const change of changes) {
                 for (const watcherPath of watchersPaths) {
-                    if (change.currentPath.startsWith(watcherPath)) {
-                        pathsToFire.add(watcherPath);
+                    if (change.currentPath.split('.').slice(0, -1).join('.') === watcherPath) {
+                        pathsToFire.set(watcherPath, change.proxy);
                     }
                 }
             }
 
-            for (const path of pathsToFire) {
-                const currentValue = getByKey(storage, path);
+            for (const [path, currentValue] of pathsToFire.entries()) {
                 for (const watcherKey of this._watchersKeyByPath[path]) {
                     this._events.emit(watcherKey, currentValue);
                 }
@@ -43,8 +41,8 @@ export default class ObservableStore extends Store {
     watch(path: string, watcher: WatcherFunction) {
         const watcherKey = craftUID();
         this._watchingByKey[watcherKey] = new Promise((resolve) => {
-            this._events.on(watcherKey, async (currentValue) => {
-                await Promise.resolve(watcher(currentValue, resolve));
+            this._events.on(watcherKey, (currentValue) => {
+                watcher(currentValue, resolve);
             });
         });
 
