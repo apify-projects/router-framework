@@ -11,7 +11,7 @@ declare class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames
     handler: GenericHandlerOptionsHandler<Methods>;
     controlHandler: GenericHandlerOptionsHandler<Methods>;
     failHandler: GenericHandlerOptionsHandler<Methods>;
-    extendApi: (context: RequestContext, api: ApiProxy) => Methods;
+    extendApi: (context: RequestContext, api: Partial<ApiProxy & Methods>) => Partial<Methods>;
     dataset: Dataset;
     queue: Queue;
     router: Router;
@@ -20,7 +20,7 @@ declare class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames
     _initialize(): Promise<void>;
     attachRouter(router: Router): void;
     get store(): StoresList;
-    makeApi(context: RequestContext, routerData?: RouterData): ApiProxy & Methods;
+    makeApi(context: RequestContext, routerData?: RouterData): Partial<ApiProxy & Methods>;
     run(context: RequestContext, routerData?: RouterData): Promise<void>;
 }
 export default GenericHandler;

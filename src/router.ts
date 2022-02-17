@@ -30,7 +30,7 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
     log: Logger;
 
     constructor(options: RouterOptions<Methods>) {
-        const { key = `router`, inputValidator, routes = [], hooks = [], stores = [], crawler, extendRouteApi } = options;
+        const { key = `router`, inputValidator, routes = [], hooks = [], stores = [], crawler, extendRouteApi = () => null } = options;
 
         this.id = key;
         this.routes = {};
@@ -75,11 +75,6 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
 
     setHooks(hooks: Hook<any, any>[] = []) {
         for (const hook of hooks) {
-            hook.extendApi = (context, api) => ({
-                ...this.extendRouteApi(context, api),
-                ...(hook.extendApi(context, api) || {}),
-            });
-
             this.setHook(hook);
         }
     }

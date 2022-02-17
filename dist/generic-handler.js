@@ -51,7 +51,7 @@ class GenericHandler {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     makeApi(context, routerData = {}) {
         const getTrailId = () => context.request?.userData?.trailId;
-        const api = {
+        let api = {
             // main api
             store: this.store,
             dataset: this.dataset,
@@ -64,17 +64,22 @@ class GenericHandler {
                 id: this.id,
             },
             // accessors
-            getInput: () => routerData.input,
+            getInput: () => routerData.input || {},
             // trail
             trail: {
                 addToRequest: (request) => (0, utils_1.extendRequest)(request, { trailId: getTrailId() }),
                 getId: () => getTrailId(),
-                getState: () => this.store.trails.get(getTrailId()),
+                getState: () => this.store.trails.get(getTrailId()) || {},
                 setState: (state) => this.store.trails.set(getTrailId(), state),
             },
             // utils
             log: this.log,
             absoluteUrl: (path) => (0, utils_1.resolveUrl)(path, context.request.loadedUrl),
+        };
+        // Extends it first with router
+        api = {
+            ...api,
+            ...(this.router.extendRouteApi(context, api) || {}),
         };
         return {
             ...api,

@@ -69,14 +69,15 @@ export type ApiProxy = {
 
 export type OmitGloblalApi<T> = Omit<T, 'store' | 'router' | 'dataset' | 'queue' | 'trail'>;
 
-export type GenericHandlerOptionsHandler<Methods = RouterHandlerDefaultMethods, Api = ApiProxy & Methods> = (context: RequestContext, api: Api) => Promise<void>
+export type GenericHandlerOptionsHandler<Methods = RouterHandlerDefaultMethods, Api = ApiProxy & Methods> = (context: RequestContext, api: Partial<Api>) => Promise<void>
 
 export type GenericHandlerOptionsHandlerLimited<Methods = RouterHandlerDefaultMethods> = GenericHandlerOptionsHandler<Methods, OmitGloblalApi<ApiProxy & Methods>>
 
 export type HookAvailableNames = 'ROUTE_STARTED' | 'ROUTE_ENDED' | 'ROUTE_FAILED' | 'ROUTER_STARTED' | 'ROUTER_ENDED' | 'QUEUE_STARTED' | 'QUEUE_ENDED'
 
 export type RouterHandlerDefaultMethods = {
-    [methodName: string]: any
+    // [methodName: string]: any
+    empty?: () => void;
 }
 
 export type RouteHandlerOptions<Methods = RouterHandlerDefaultMethods, AllowedNames = string> = {
@@ -85,7 +86,7 @@ export type RouteHandlerOptions<Methods = RouterHandlerDefaultMethods, AllowedNa
     handler?: GenericHandlerOptionsHandler<Methods>,
     controlHandler?: GenericHandlerOptionsHandler<Methods>,
     failHandler?: GenericHandlerOptionsHandler<Methods>,
-    extendApi?: (context: RequestContext, api: ApiProxy) => Methods
+    extendApi?: (context: RequestContext, api: Partial<ApiProxy & Methods>) => Partial<Methods>
 }
 
 export type StoreOptions = {

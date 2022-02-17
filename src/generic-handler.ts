@@ -16,7 +16,7 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
     handler: GenericHandlerOptionsHandler<Methods>;
     controlHandler: GenericHandlerOptionsHandler<Methods>;
     failHandler: GenericHandlerOptionsHandler<Methods>;
-    extendApi: (context: RequestContext, api: ApiProxy) => Methods;
+    extendApi: (context: RequestContext, api: Partial<ApiProxy & Methods>) => Partial<Methods>;
 
     dataset: Dataset;
     queue: Queue;
@@ -34,7 +34,7 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
         this.handler = handler || (async () => undefined);
         this.controlHandler = controlHandler || (async () => undefined);
         this.failHandler = failHandler || (async () => undefined);
-        this.extendApi = extendApi || (() => ({} as Methods));
+        this.extendApi = extendApi || (() => ({} as Partial<Methods>));
 
         this.dataset = undefined;
         this.queue = undefined;
@@ -67,7 +67,7 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
     makeApi(context: RequestContext, routerData: RouterData = {}) {
         const getTrailId = () => context.request?.userData?.trailId;
 
-        const api = {
+        let api = {
             // main api
             store: this.store,
             dataset: this.dataset,
@@ -80,12 +80,12 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
                 id: this.id,
             },
             // accessors
-            getInput: () => routerData.input,
+            getInput: () => routerData.input || {},
             // trail
             trail: {
                 addToRequest: (request: RequestSource) => extendRequest(request, { trailId: getTrailId() }),
                 getId: () => getTrailId(),
-                getState: () => this.store.trails.get(getTrailId()),
+                getState: () => this.store.trails.get(getTrailId()) || {},
                 setState: (state: any) => this.store.trails.set(getTrailId(), state),
             },
             // utils
@@ -93,10 +93,16 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
             absoluteUrl: (path: string) => resolveUrl(path, context.request.loadedUrl),
         };
 
+        // Extends it first with router
+        api = {
+            ...api,
+            ...(this.router.extendRouteApi(context, api) || {}),
+        };
+
         return {
             ...api,
-            ...(this.extendApi(context, api) || {}),
-        } as (ApiProxy & Methods);
+            ...(this.extendApi(context, api as Partial<ApiProxy & Methods>) || {}),
+        } as Partial<ApiProxy & Methods>;
     }
 
     // eslint-disable-next-line max-len

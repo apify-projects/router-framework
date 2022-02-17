@@ -15,7 +15,7 @@ class Router {
     extendRouteApi;
     log;
     constructor(options) {
-        const { key = `router`, inputValidator, routes = [], hooks = [], stores = [], crawler, extendRouteApi } = options;
+        const { key = `router`, inputValidator, routes = [], hooks = [], stores = [], crawler, extendRouteApi = () => null } = options;
         this.id = key;
         this.routes = {};
         this.hooks = {};
@@ -51,10 +51,6 @@ class Router {
     }
     setHooks(hooks = []) {
         for (const hook of hooks) {
-            hook.extendApi = (context, api) => ({
-                ...this.extendRouteApi(context, api),
-                ...(hook.extendApi(context, api) || {}),
-            });
             this.setHook(hook);
         }
     }

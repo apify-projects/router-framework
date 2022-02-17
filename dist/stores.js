@@ -43,17 +43,17 @@ exports.default = {
      * Waiting to finnish all current async operations
      */
     async closing() {
-        return Promise.allSettled(Object.values(exports.storage)
-            .filter((store) => store instanceof observable_store_1.default)
-            .map(async (store) => store.closing()));
-    },
-    async persist() {
         return new Promise((resolve) => {
             // Resolve in 10s max (if mishandled watchers are not resolved)
             setTimeout(resolve, 10000);
             // Or resolve the watchers
-            Promise.allSettled(Object.values(exports.storage).map((store) => store.persist())).then(resolve);
+            return Promise.allSettled(Object.values(exports.storage)
+                .filter((store) => store instanceof observable_store_1.default)
+                .map(async (store) => store.closing())).then(resolve);
         });
+    },
+    async persist() {
+        return Promise.allSettled(Object.values(exports.storage).map((store) => store.persist()));
     },
 };
 //# sourceMappingURL=stores.js.map

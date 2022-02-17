@@ -18,8 +18,8 @@ declare const _default: {
     /**
      * Waiting to finnish all current async operations
      */
-    closing(): Promise<PromiseSettledResult<PromiseSettledResult<void>[]>[]>;
-    persist(): Promise<unknown>;
+    closing(): Promise<unknown>;
+    persist(): Promise<PromiseSettledResult<void>[]>;
 };
 export default _default;
 //# sourceMappingURL=stores.d.ts.map
