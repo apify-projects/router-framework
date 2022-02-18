@@ -2,6 +2,7 @@
 import Apify from 'apify';
 import setByKey from 'lodash.set';
 import getByKey from 'lodash.get';
+import hasByPath from 'lodash.has';
 import cloneDeep from 'lodash.clonedeep';
 import { craftUIDKey } from './common/utils';
 import Logger from './logger';
@@ -44,6 +45,10 @@ export default class Store {
 
     set(key: string, data: any) {
         setByKey(this.storage, key, data);
+    }
+
+    has(path: string) {
+        return hasByPath(this.storage, path);
     }
 
     add(key: string, nb: number) {

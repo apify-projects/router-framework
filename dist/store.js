@@ -5,6 +5,7 @@ const tslib_1 = require("tslib");
 const apify_1 = (0, tslib_1.__importDefault)(require("apify"));
 const lodash_set_1 = (0, tslib_1.__importDefault)(require("lodash.set"));
 const lodash_get_1 = (0, tslib_1.__importDefault)(require("lodash.get"));
+const lodash_has_1 = (0, tslib_1.__importDefault)(require("lodash.has"));
 const lodash_clonedeep_1 = (0, tslib_1.__importDefault)(require("lodash.clonedeep"));
 const utils_1 = require("./common/utils");
 const logger_1 = (0, tslib_1.__importDefault)(require("./logger"));
@@ -35,6 +36,9 @@ class Store {
     }
     set(key, data) {
         (0, lodash_set_1.default)(this.storage, key, data);
+    }
+    has(path) {
+        return (0, lodash_has_1.default)(this.storage, path);
     }
     add(key, nb) {
         this.set(key, +(this.get(key) || 0) + nb);

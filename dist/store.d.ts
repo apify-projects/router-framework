@@ -12,6 +12,7 @@ export default class Store {
     read(): Record<string, any>;
     get(key: string): any;
     set(key: string, data: any): void;
+    has(path: string): any;
     add(key: string, nb: number): void;
     subtract(key: string, nb: number): void;
     push(key: string, data: any): void;

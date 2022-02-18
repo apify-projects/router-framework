@@ -1,5 +1,6 @@
 /// <reference types="node" />
 import type Apify from 'apify';
+import { QueueOperationInfo } from 'apify';
 export declare enum STORE {
     STATE = "GS_STATE",
     STATS = "GS_STATS"
@@ -57,6 +58,7 @@ export declare type ApiProxy = {
     };
     log: import('../logger').default;
     absoluteUrl(path: string): string | void;
+    addEntryRequest: (routeName: string, query: any, request: RequestSource) => Promise<QueueOperationInfo[]>;
 };
 export declare type OmitGloblalApi<T> = Omit<T, 'store' | 'router' | 'dataset' | 'queue' | 'trail'>;
 export declare type GenericHandlerOptionsHandler<Methods = RouterHandlerDefaultMethods, Api = ApiProxy & Methods> = (context: RequestContext, api: Partial<Api>) => Promise<void>;
@@ -96,9 +98,6 @@ export declare type HOOK_ROUTE_STARTED_OUTPUT = {
 } | undefined;
 export declare type CrawlerType = (options: UnknownObject) => {
     run: () => Promise<void>;
-};
-export declare type QueueStartedApiMethods = {
-    addRequest: (routeName: string, query: any, request: RequestSource) => void;
 };
 export declare type ResolverFn<T = undefined> = (value?: T) => void;
 export declare type WatcherFunction = (currentValue: any, resolve: ResolverFn) => void;

@@ -57,7 +57,6 @@ class Queue {
     }
     async batchRequests(requests, options) {
         await this.init();
-        // return (this.requestQueue as any).batchAddRequests(requests, options);
         return Promise.all(requests.map((request) => this.addRequest(request, options)));
     }
 }

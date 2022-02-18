@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type Apify from 'apify';
+import { QueueOperationInfo } from 'apify';
 
 /* eslint-disable max-len */
 export enum STORE {
@@ -65,6 +66,7 @@ export type ApiProxy = {
     },
     log: import('../logger').default,
     absoluteUrl(path: string): string | void,
+    addEntryRequest: (routeName: string, query: any, request: RequestSource) => Promise<QueueOperationInfo[]>;
 }
 
 export type OmitGloblalApi<T> = Omit<T, 'store' | 'router' | 'dataset' | 'queue' | 'trail'>;
@@ -120,10 +122,6 @@ export type HOOK_ROUTE_STARTED_OUTPUT = { stop?: boolean } | undefined;
 export type CrawlerType = (options: UnknownObject) => { run: () => Promise<void> };
 
 // hooks.ts
-
-export type QueueStartedApiMethods = {
-    addRequest: (routeName: string, query: any, request: RequestSource) => void;
-}
 
 // observable-store.ts
 

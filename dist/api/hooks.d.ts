@@ -1,6 +1,6 @@
-import { QueueStartedApiMethods, RouteHandlerOptions, RouterHandlerDefaultMethods } from '../common/types';
+import { RouteHandlerOptions, RouterHandlerDefaultMethods } from '../common/types';
 export declare function ROUTER_STARTED<Methods = RouterHandlerDefaultMethods>(options: Omit<RouteHandlerOptions<Methods>, 'name'>): import("../hook").default<Methods, import("../common/types").HookAvailableNames>;
-export declare function QUEUE_STARTED<Methods = RouterHandlerDefaultMethods>(options: Pick<RouteHandlerOptions<Methods | QueueStartedApiMethods>, 'handler'>): import("../hook").default<QueueStartedApiMethods | Methods, import("../common/types").HookAvailableNames>;
+export declare function QUEUE_STARTED<Methods = RouterHandlerDefaultMethods>(options: Omit<RouteHandlerOptions<Methods>, 'name'>): import("../hook").default<Methods, import("../common/types").HookAvailableNames>;
 export declare function ROUTE_STARTED<Methods = RouterHandlerDefaultMethods>(options: Omit<RouteHandlerOptions<Methods>, 'name'>): import("../hook").default<Methods, import("../common/types").HookAvailableNames>;
 export declare function ROUTE_ENDED<Methods = RouterHandlerDefaultMethods>(options: Omit<RouteHandlerOptions<Methods>, 'name'>): import("../hook").default<Methods, import("../common/types").HookAvailableNames>;
 export declare function ROUTE_FAILED<Methods = RouterHandlerDefaultMethods>(options: Omit<RouteHandlerOptions<Methods>, 'name'>): import("../hook").default<Methods, import("../common/types").HookAvailableNames>;

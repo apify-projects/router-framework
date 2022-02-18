@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { QueueStartedApiMethods, RequestSource, RouteHandlerOptions, RouterHandlerDefaultMethods } from '../common/types';
-import * as utils from '../common/utils';
+import { RouteHandlerOptions, RouterHandlerDefaultMethods } from '../common/types';
 import defineHook from './define-hook';
 
 export function ROUTER_STARTED<Methods = RouterHandlerDefaultMethods>(options: Omit<RouteHandlerOptions<Methods>, 'name'>) {
@@ -10,35 +9,10 @@ export function ROUTER_STARTED<Methods = RouterHandlerDefaultMethods>(options: O
     });
 }
 
-export function QUEUE_STARTED<Methods = RouterHandlerDefaultMethods>(options: Pick<RouteHandlerOptions<Methods | QueueStartedApiMethods>, 'handler'>) {
-    return defineHook<Methods | QueueStartedApiMethods>({
+export function QUEUE_STARTED<Methods = RouterHandlerDefaultMethods>(options: Omit<RouteHandlerOptions<Methods>, 'name'>) {
+    return defineHook<Methods>({
+        ...options,
         name: 'QUEUE_STARTED',
-        handler: options.handler,
-        extendApi(_, api) {
-            return {
-                addRequest(routeName: string, query: any, request: RequestSource) {
-                    // Store the trail
-                    const trailData = { query, requests: {}, stats: {}, data: {}, partial: {} };
-                    const trailId = api.store.trails.setAndGetKey(trailData);
-                    api.log.info(`Created trail ${trailId}`, { trailData });
-
-                    // Pass on data for the control
-                    const state = api.store.handlers.get(api.resource.id) as { requests: RequestSource[] } || { requests: [] };
-                    const requestExtended = utils.extendRequest(request, { type: routeName, trailId });
-                    state.requests.push(requestExtended);
-                    api.store.handlers.set(api.resource.id, state);
-                    // api.log.info(`Updated handler's state`, { state });
-                },
-            };
-        },
-        async controlHandler(_, api) {
-            const state = api.store.handlers.get(api.resource.id) || {};
-            const { requests = [] } = state;
-            // api.log.info(`Fetched handler's state`, { state });
-            for (const request of requests as RequestSource[]) {
-                await api.queue.addRaw(request);
-            }
-        },
     });
 }
 

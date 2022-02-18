@@ -91,6 +91,16 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
             // utils
             log: this.log,
             absoluteUrl: (path: string) => resolveUrl(path, context.request.loadedUrl),
+            // request
+            async addEntryRequest(routeName: string, query: any, request: RequestSource) {
+                // Store the trail
+                const trailData = { query, requests: {}, stats: {}, data: {}, partial: {} };
+                const trailId = this.store.trails.setAndGetKey(trailData);
+                this.log.info(`Created trail ${trailId}`, { trailData });
+
+                // Pass on data for the control
+                return api.queue.addRaw(extendRequest(request, { type: routeName, trailId }));
+            },
         };
 
         // Extends it first with router

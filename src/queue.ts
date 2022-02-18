@@ -74,7 +74,6 @@ export default class Queue {
 
     async batchRequests(requests: RequestSource[], options?: RequestOptions): Promise<Apify.QueueOperationInfo[]> {
         await this.init();
-        // return (this.requestQueue as any).batchAddRequests(requests, options);
         return Promise.all(requests.map((request: RequestSource) => this.addRequest(request, options)));
     }
 };
