@@ -108,8 +108,6 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
     }
 
     async run(inputRaw: any) {
-        this.log.start('Started..');
-
         await storesApi.init();
 
         this.log.info(`Raw input is:`, { inputRaw });
@@ -136,7 +134,7 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
 
                 context.page.on('response', async (response) => {
                     try {
-                        const additionalSize = Math.floor((await response.buffer()).length / 1000);
+                        const additionalSize = Math.floor((await response.body()).length / 1000);
                         context.request.userData.sizeInKb += additionalSize;
                         if (trailId) {
                             storesApi.get().trails.add(`${trailId}.stats.sizeInKb`, additionalSize);
@@ -153,11 +151,12 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
                 const trailId = context.request?.userData?.trailId;
                 context.request.userData.endedAt = new Date().toISOString();
                 // eslint-disable-next-line max-len
-                context.request.userData.durationInMs = (new Date(context.request.userData.endedAt).getTime() - new Date(context.request.userData.startedAt).getTime());
+                context.request.userData.queuedDurationInMs = (new Date(context.request.userData.endedAt).getTime() - new Date(context.request.userData.startedAt).getTime());
 
                 if (trailId) {
-                    storesApi.get().trails.add(`${trailId}.stats.durationInMs`, context.request.userData.durationInMs);
+                    storesApi.get().trails.add(`${trailId}.stats.queuedDurationInMs`, context.request.userData.queuedDurationInMs);
                     storesApi.get().trails.add(`${trailId}.stats.retries`, context.request.retryCount);
+                    storesApi.get().trails.set(`${trailId}.stats.endedAt`, new Date().toISOString());
                 }
 
                 logTrailHistory(context);
@@ -165,7 +164,6 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
         ];
 
         const handlePageFunction = async (context: RequestContext) => {
-            this.log.start(`Opening page ${context.request.url}`);
             const { type } = context.request?.userData || {};
 
             // Before each route Hook can be used for logging, anti-bot detection, catpatcha, etc.

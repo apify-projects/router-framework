@@ -1,1 +1,0 @@
-{"version":3,"file":"define-hook.d.ts","sourceRoot":"","sources":["../../src/api/define-hook.ts"],"names":[],"mappings":"AACA,OAAO,IAAI,MAAM,SAAS,CAAC;AAC3B,OAAO,EAAE,kBAAkB,EAAE,mBAAmB,EAAE,2BAA2B,EAAE,MAAM,iBAAiB,CAAC;AAEvG,MAAM,CAAC,OAAO,UAAU,UAAU,CAAC,OAAO,GAAG,2BAA2B,EAAE,OAAO,EAAE,mBAAmB,CAAC,OAAO,EAAE,kBAAkB,CAAC,qCAElI"}

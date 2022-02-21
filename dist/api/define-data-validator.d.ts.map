@@ -1,1 +1,0 @@
-{"version":3,"file":"define-data-validator.d.ts","sourceRoot":"","sources":["../../src/api/define-data-validator.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,oBAAoB,EAAE,MAAM,iBAAiB,CAAC;AACvD,OAAO,aAAa,MAAM,mBAAmB,CAAC;AAE9C,MAAM,CAAC,OAAO,UAAU,mBAAmB,CAAC,cAAc,EAAE,eAAe,EAAE,OAAO,EAAE,oBAAoB,CAAC,cAAc,EAAE,eAAe,CAAC,kDAE1I"}

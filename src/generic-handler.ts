@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProxy, GenericHandlerOptionsHandler, RequestContext, RequestSource, RouteHandlerOptions, RouterData, RouterHandlerDefaultMethods } from './common/types';
-import { craftUID, extendRequest, resolveUrl } from './common/utils';
+import { craftUID, craftUIDKey, extendRequest, resolveUrl } from './common/utils';
 import Dataset from './dataset';
 import Logger from './logger';
 import Queue from './queue';
@@ -46,12 +46,10 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
     async _initialize() {
         if (!this.dataset) {
             this.dataset = new Dataset();
-            this.dataset.log.attachParent(this);
         }
 
         if (!this.queue) {
             this.queue = new Queue(this.name as unknown as string);
-            this.queue.log.attachParent(this);
         }
     }
 
@@ -65,7 +63,7 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     makeApi(context: RequestContext, routerData: RouterData = {}) {
-        const getTrailId = () => context.request?.userData?.trailId;
+        const getTrailId = () => context?.request?.userData?.trailId;
 
         let api = {
             // main api
@@ -89,14 +87,14 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
                 setState: (state: any) => this.store.trails.set(getTrailId(), state),
             },
             // utils
-            log: this.log,
+            log: this.log.cloneWithSuffix(`${getTrailId()}:${context?.request?.id}`),
             absoluteUrl: (path: string) => resolveUrl(path, context.request.loadedUrl),
             // request
             async addEntryRequest(routeName: string, query: any, request: RequestSource) {
                 // Store the trail
-                const trailData = { query, requests: {}, stats: {}, data: {}, partial: {} };
-                const trailId = this.store.trails.setAndGetKey(trailData);
-                this.log.info(`Created trail ${trailId}`, { trailData });
+                const trailData = { query, requests: {}, stats: { startedAt: new Date().toISOString() } };
+                const trailId = craftUIDKey('trail_');
+                this.store.trails.set(trailId, trailData);
 
                 // Pass on data for the control
                 return api.queue.addRaw(extendRequest(request, { type: routeName, trailId }));
@@ -119,17 +117,19 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
     async run(context: RequestContext, routerData?: RouterData): Promise<void> {
         await this._initialize();
 
-        this.log.start('Started..');
+        const api = this.makeApi(context, routerData);
+
+        api.log.start('Started..');
 
         try {
-            await this.handler(context, this.makeApi(context, routerData));
+            await this.handler(context, api);
         } catch (error) {
             this.log.error(`Failed with error.`, { error });
             throw error;
         }
 
         try {
-            await this.controlHandler(context, this.makeApi(context, routerData));
+            await this.controlHandler(context, api);
         } catch (error) {
             this.log.error(`Failed with error.`, { error });
             throw error;

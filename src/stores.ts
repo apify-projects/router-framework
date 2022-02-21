@@ -9,6 +9,7 @@ export type StoresList = {
     trails?: Store,
     handlers?: Store,
     statuses?: ObservableStore,
+    incorrectDataset?: ObservableStore,
     [storeName: string]: Store
 };
 
@@ -34,8 +35,8 @@ export default {
             // Set up a default state store
             this.add(new Store({ name: 'state' }));
             this.add(new Store({ name: 'trails' }));
-            this.add(new Store({ name: 'handlers' }));
-            this.add(new ObservableStore({ name: 'statuses' }));
+            this.add(new Store({ name: 'statuses' }));
+            this.add(new Store({ name: 'incorrectDataset' }));
 
             await Promise.allSettled(Object.values(storage).map((store) => store.init()));
 

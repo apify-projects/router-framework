@@ -6,7 +6,7 @@ import { UID_KEY_PREFIX } from '../consts';
 const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
 
 export const craftUID = customAlphabet(alphabet, 4);
-export const craftUIDKey = () => `${UID_KEY_PREFIX}${customAlphabet(alphabet, 6)()}`;
+export const craftUIDKey = (prefix?: string) => `${prefix || UID_KEY_PREFIX}${customAlphabet(alphabet, 6)()}`;
 
 export const arrayToKeyedObject = (arr: any[]) => arr
     .reduce((acc, item) => {
