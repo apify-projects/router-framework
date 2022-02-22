@@ -4,9 +4,13 @@ import { URL } from 'url';
 import { UID_KEY_PREFIX } from '../consts';
 
 const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
+const uidPartLength = 2;
 
 export const craftUID = customAlphabet(alphabet, 4);
-export const craftUIDKey = (prefix?: string) => `${prefix || UID_KEY_PREFIX}${customAlphabet(alphabet, 6)()}`;
+export const craftUIDKey = (prefix?: string) => `${prefix || UID_KEY_PREFIX}_${customAlphabet(alphabet, uidPartLength)()}${new Date().getTime().toString(36)}`;
+export const getUIDKeyTime = (key: string) => parseInt(key.split('_')[1].slice(uidPartLength), 36);
+export const sortUIDKeysFromLatest = (keys: string[]) => keys.sort((a, b) => getUIDKeyTime(a) - getUIDKeyTime(b));
+export const sortUIDKeysFromOldest = (keys: string[]) => keys.sort((a, b) => getUIDKeyTime(b) - getUIDKeyTime(a));
 
 export const arrayToKeyedObject = (arr: any[]) => arr
     .reduce((acc, item) => {
