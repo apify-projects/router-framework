@@ -1,15 +1,24 @@
+import EventEmitter from 'events';
 import Apify from 'apify';
 import { UnknownObject } from './common/types';
 
+const loggerEvents = new EventEmitter();
 export default class Logger {
     resource: { id: string };
     suffix: string;
+    level: string;
     logger: typeof Apify.utils.log
 
     constructor(resource: { id: string }) {
         this.resource = resource;
         this.logger = Apify.utils.log;
+        this.logger.setLevel(this.logger.LEVELS.INFO);
+        loggerEvents.on('debugMode', () => { this.logger.setLevel(this.logger.LEVELS.DEBUG); });
+        loggerEvents.on('infoMode', () => { this.logger.setLevel(this.logger.LEVELS.INFO); });
     }
+
+    debugMode() { loggerEvents.emit('debugMode'); }
+    infoMode() { loggerEvents.emit('infoMode'); }
 
     resourceId() {
         return this.resource.id;
@@ -24,6 +33,10 @@ export default class Logger {
         logger.resource = this.resource;
         logger.suffix = suffix;
         return logger;
+    }
+
+    debug(message: string, data?: UnknownObject) {
+        this.logger.debug(this.makeLogMessage('[?!]', this.resourceId(), message), data);
     }
 
     start(message: string, data?: UnknownObject) {
