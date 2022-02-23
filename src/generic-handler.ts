@@ -87,7 +87,7 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
                 setState: (state: any) => this.store.trails.set(getTrailId(), state),
             },
             // utils
-            log: this.log.cloneWithSuffix(`${getTrailId()}:${context?.request?.id}`),
+            log: this.log.cloneWithSuffix(getTrailId() ? `${getTrailId()}:${context?.request?.id}` : ''),
             absoluteUrl: (path: string) => resolveUrl(path, context.request.loadedUrl),
             // request
             async addEntryRequest(routeName: string, query: any, request: RequestSource) {

@@ -5,7 +5,7 @@ import defineStore from './define-store';
 import hooks from './hooks';
 import Router from '../router';
 import { HOOK } from '../consts';
-import { craftUID, craftUIDKey, sortUIDKeysFromLatest, sortUIDKeysFromOldest, arrayToKeyedObject, randomNumberBetween, resolveUrl } from '../common/utils';
+import { craftUID, craftUIDKey, sortUIDKeysFromFirst, sortUIDKeysFromLast, arrayToKeyedObject, randomNumberBetween, resolveUrl } from '../common/utils';
 
 const defineHookRouterStarted = hooks.ROUTER_STARTED;
 const defineHookRouterEnded = hooks.ROUTER_ENDED;
@@ -31,8 +31,8 @@ export {
     HOOK,
     craftUID,
     craftUIDKey,
-    sortUIDKeysFromLatest,
-    sortUIDKeysFromOldest,
+    sortUIDKeysFromFirst,
+    sortUIDKeysFromLast,
     arrayToKeyedObject,
     randomNumberBetween,
 };
@@ -53,8 +53,8 @@ export default {
     HOOK,
     craftUID,
     craftUIDKey,
-    sortUIDKeysFromLatest,
-    sortUIDKeysFromOldest,
+    sortUIDKeysFromFirst,
+    sortUIDKeysFromLast,
     arrayToKeyedObject,
     randomNumberBetween,
     resolveUrl,
