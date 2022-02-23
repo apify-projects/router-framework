@@ -50,7 +50,7 @@ export default class Queue {
         await this.init();
         const routeName = getRouteName(routeNameOrRoute);
         const sourceExtended = extendRequest(source, { type: routeName });
-        this.log.info(`Adding ${sourceExtended.url} to ${routeName} queue.`);
+        this.log.info(`Queueing ${sourceExtended.url} request for: ${routeName}.`);
         return this.addRequest(sourceExtended, options);
     }
 
@@ -68,7 +68,6 @@ export default class Queue {
     }
 
     async addRequest(request: RequestSource, options?: RequestOptions): Promise<Apify.QueueOperationInfo> {
-        this.log.info(`Adding ${request.url} to queue.`, { request });
         return this.requestQueue.addRequest(request, options);
     }
 
