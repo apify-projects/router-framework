@@ -151,10 +151,10 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
                 const trailId = context.request?.userData?.trailId;
                 context.request.userData.endedAt = new Date().toISOString();
                 // eslint-disable-next-line max-len
-                context.request.userData.queuedDurationInMs = (new Date(context.request.userData.endedAt).getTime() - new Date(context.request.userData.startedAt).getTime());
+                context.request.userData.aggregatedDurationInMs = (new Date(context.request.userData.endedAt).getTime() - new Date(context.request.userData.startedAt).getTime());
 
                 if (trailId) {
-                    storesApi.get().trails.add(`${trailId}.stats.queuedDurationInMs`, context.request.userData.queuedDurationInMs);
+                    storesApi.get().trails.add(`${trailId}.stats.aggregatedDurationInMs`, context.request.userData.aggregatedDurationInMs);
                     storesApi.get().trails.add(`${trailId}.stats.retries`, context.request.retryCount);
                     storesApi.get().trails.set(`${trailId}.stats.endedAt`, new Date().toISOString());
                 }
