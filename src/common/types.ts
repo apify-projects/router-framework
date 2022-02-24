@@ -39,7 +39,7 @@ export type UnknownFunction = (...params: []) => unknown
 export type RequestSource = import('apify').Request | import('apify').RequestOptions
 export type RequestOptions = { forefront?: boolean | undefined } | undefined
 
-export type RequestContext<Page = import('playwright').Page> = Apify.CrawlingContext & { page: Page, request: import('apify').Request }
+export type RequestContext<Page = import('playwright').Page> = Apify.CrawlingContext & { $: any, page: Page, request: import('apify').Request }
 
 // generic-handler.ts
 

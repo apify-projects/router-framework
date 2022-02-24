@@ -8,7 +8,7 @@ const uidPartLength = 2;
 
 export const craftUID = customAlphabet(alphabet, 4);
 // eslint-disable-next-line max-len
-export const craftUIDKey = (prefix?: string) => `${prefix ? `${prefix}_` : UID_KEY_PREFIX}${customAlphabet(alphabet, uidPartLength)()}${new Date().getTime().toString(36)}`;
+export const craftUIDKey = (prefix?: string, uidLength = uidPartLength) => `${prefix ? `${prefix}_` : UID_KEY_PREFIX}${customAlphabet(alphabet, uidLength)()}${new Date().getTime().toString(36)}`;
 export const getUIDKeyTime = (key: string) => parseInt(key.split('_').reverse()[0].slice(uidPartLength), 36);
 export const sortUIDKeysFromFirst = (keys: string[]) => keys.sort((a, b) => getUIDKeyTime(a) - getUIDKeyTime(b));
 export const sortUIDKeysFromLast = (keys: string[]) => keys.sort((a, b) => getUIDKeyTime(b) - getUIDKeyTime(a));

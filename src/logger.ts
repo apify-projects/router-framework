@@ -3,6 +3,7 @@ import Apify from 'apify';
 import { UnknownObject } from './common/types';
 
 const loggerEvents = new EventEmitter();
+loggerEvents.setMaxListeners(8000);
 export default class Logger {
     resource: { id: string };
     suffix: string;

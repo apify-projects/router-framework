@@ -132,9 +132,23 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
                 context.request.userData.sizeInKb = 0;
                 logTrailHistory(context);
 
-                context.page.on('response', async (response) => {
+                if ('page' in context) {
+                    context.page.on('response', async (response) => {
+                        try {
+                            const additionalSize = Math.floor((await response.body()).length / 1000);
+                            context.request.userData.sizeInKb += additionalSize;
+                            if (trailId) {
+                                storesApi.get().trails.add(`${trailId}.stats.sizeInKb`, additionalSize);
+                            }
+                        } catch (error) {
+                            // Fails on redirect, silently.
+                        }
+                    });
+                };
+
+                if ('$' in context) {
                     try {
-                        const additionalSize = Math.floor((await response.body()).length / 1000);
+                        const additionalSize = Math.floor(context.$.html().length / 1000);
                         context.request.userData.sizeInKb += additionalSize;
                         if (trailId) {
                             storesApi.get().trails.add(`${trailId}.stats.sizeInKb`, additionalSize);
@@ -142,7 +156,7 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
                     } catch (error) {
                         // Fails on redirect, silently.
                     }
-                });
+                }
             },
         ];
 
@@ -184,6 +198,7 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
 
             // Run the route fail handler
             const route = this.getRoute(type);
+            await route.initialize();
             await route.failHandler(context, route.makeApi(context, routerData));
         };
 

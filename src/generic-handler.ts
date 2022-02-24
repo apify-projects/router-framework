@@ -43,7 +43,7 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
         this.log = new Logger(this);
     }
 
-    async _initialize() {
+    async initialize() {
         if (!this.dataset) {
             this.dataset = new Dataset();
         }
@@ -115,7 +115,7 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
 
     // eslint-disable-next-line max-len
     async run(context: RequestContext, routerData?: RouterData): Promise<void> {
-        await this._initialize();
+        await this.initialize();
 
         const api = this.makeApi(context, routerData);
 

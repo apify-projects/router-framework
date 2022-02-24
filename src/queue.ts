@@ -1,7 +1,7 @@
 import Apify from 'apify';
 import Logger from './logger';
 import { RequestSource, RequestOptions } from './common/types';
-import { extendRequest } from './common/utils';
+import { craftUIDKey, extendRequest } from './common/utils';
 
 type routeNameOrRoute = string | { name: string }
 
@@ -68,7 +68,7 @@ export default class Queue {
     }
 
     async addRequest(request: RequestSource, options?: RequestOptions): Promise<Apify.QueueOperationInfo> {
-        return this.requestQueue.addRequest(request, options);
+        return this.requestQueue.addRequest({ uniqueKey: craftUIDKey('req_', 6), ...request }, options);
     }
 
     async batchRequests(requests: RequestSource[], options?: RequestOptions): Promise<Apify.QueueOperationInfo[]> {
