@@ -119,7 +119,7 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
 
         const api = this.makeApi(context, routerData);
 
-        api.log.start('Started..');
+        api.log.start(`Started.. ${context?.request?.url || ''}`);
 
         try {
             await this.handler(context, api);
