@@ -124,6 +124,8 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
             }
         };
 
+        const proxyConfiguration = (input as any).proxy ? await Apify.createProxyConfiguration((input as any).proxy) : undefined;
+
         const preNavigationHooks = [
             async (context: RequestContext) => {
                 const trailId = context.request?.userData?.trailId;
@@ -207,10 +209,10 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
         // our key params { requestQueue, handlePageFunction, handleFailedRequestFunction }
         // Will need to assess and improve this later.
         const crawler = await Promise.resolve(this.crawler({
-            // TODO: add a handleFailedRequestFunction
             requestQueue: await Apify.openRequestQueue(),
             handlePageFunction,
             handleFailedRequestFunction,
+            proxyConfiguration,
             preNavigationHooks,
             postNavigationHooks,
         }));
