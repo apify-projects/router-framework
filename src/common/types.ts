@@ -39,7 +39,7 @@ export type UnknownFunction = (...params: []) => unknown
 export type RequestSource = import('apify').Request | import('apify').RequestOptions
 export type RequestOptions = { forefront?: boolean | undefined } | undefined
 
-export type RequestContext<Page = import('playwright').Page> = Apify.CrawlingContext & { $: any, page: Page, request: import('apify').Request }
+export type RequestContext = Apify.CheerioHandlePageInputs & Apify.PlaywrightHandlePageFunctionParam & Apify.BrowserCrawlingContext & Apify.CrawlingContext
 
 // generic-handler.ts
 
@@ -119,7 +119,7 @@ export type HOOK_ROUTE_STARTED_OUTPUT = { stop?: boolean } | undefined;
 
 // router.ts
 
-export type CrawlerType = (options: UnknownObject) => { run: () => Promise<void> };
+export type CrawlerType = (options: UnknownObject) => Promise<{ run: () => Promise<void> }>;
 
 // hooks.ts
 

@@ -206,14 +206,14 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
         // I came up with this idea of the user providing its crawler while passing
         // our key params { requestQueue, handlePageFunction, handleFailedRequestFunction }
         // Will need to assess and improve this later.
-        const crawler = this.crawler({
+        const crawler = await Promise.resolve(this.crawler({
             // TODO: add a handleFailedRequestFunction
             requestQueue: await Apify.openRequestQueue(),
             handlePageFunction,
             handleFailedRequestFunction,
             preNavigationHooks,
             postNavigationHooks,
-        });
+        }));
 
         // Hook to help with preparing the queue
         // Given a polyfilled requestQueue and the input data
