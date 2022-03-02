@@ -45,6 +45,7 @@ export const resolveUrl = (path: string, url: string): string | void => {
         const link = new URL(path, url);
         return link.href;
     } catch (error) {
+        console.log('error', error, path, url);
         // fail silently, return undefined
     }
 };

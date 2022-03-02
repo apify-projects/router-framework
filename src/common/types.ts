@@ -66,7 +66,7 @@ export type ApiProxy = {
     },
     log: import('../logger').default,
     absoluteUrl(path: string): string | void,
-    addEntryRequest: (routeName: string, query: any, request: RequestSource) => Promise<QueueOperationInfo[]>;
+    addEntryRequest: (routeName: string, query: any, request: RequestSource, options?: { trailId?: string }) => Promise<QueueOperationInfo[]>;
 }
 
 export type OmitGloblalApi<T> = Omit<T, 'store' | 'router' | 'dataset' | 'queue' | 'trail'>;
@@ -89,6 +89,11 @@ export type RouteHandlerOptions<Methods = RouterHandlerDefaultMethods, AllowedNa
     controlHandler?: GenericHandlerOptionsHandler<Methods>,
     failHandler?: GenericHandlerOptionsHandler<Methods>,
     extendApi?: (context: RequestContext, api: Partial<ApiProxy & Methods>) => Partial<Methods>
+}
+
+export type FileStoreOptions = {
+    name: string,
+    key?: string,
 }
 
 export type StoreOptions = {
@@ -118,6 +123,21 @@ export type DataValidatorOptions<Inputdata, OutputData> = {
 export type HOOK_ROUTE_STARTED_OUTPUT = { stop?: boolean } | undefined;
 
 // router.ts
+
+export type RouterRunOptions = {
+    proxy?: any,
+    storeRequestsBodiesToKV?: boolean,
+    storeRequestsTracesToKV?: boolean,
+}
+
+export type CrawlerTypeOptions = {
+    handlePageFunction: Apify.CheerioHandlePage | Apify.PlaywrightHandlePageFunction | undefined,
+    handleFailedRequestFunction: Apify.HandleFailedRequest | undefined,
+    requestQueue: Apify.RequestQueue,
+    preNavigationHooks: Array<any>,
+    postNavigationHooks: Array<any>,
+    proxyConfiguration: Apify.ProxyConfiguration
+}
 
 export type CrawlerType = (options: UnknownObject) => Promise<{ run: () => Promise<void> }>;
 

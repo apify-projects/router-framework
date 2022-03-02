@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Apify from 'apify';
-import { ApiProxy, CrawlerType, RequestContext, RouterData, RouterHandlerDefaultMethods } from './common/types';
+import { ApiProxy, CrawlerType, RequestContext, RouterData, RouterHandlerDefaultMethods, RouterRunOptions } from './common/types';
 import { HOOK } from './consts';
 import DataValidator from './data-validator';
 import Hook from './hook';
@@ -107,7 +107,13 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
         return route;
     }
 
-    async run(inputRaw: any) {
+    async run(inputRaw: any, options?: RouterRunOptions) {
+        const {
+            proxy,
+            storeRequestsBodiesToKV = false,
+            // storeRequestsTracesToKV = false,
+        } = options || {};
+
         await storesApi.init();
 
         this.log.info(`Raw input is:`, { inputRaw });
@@ -124,7 +130,7 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
             }
         };
 
-        const proxyConfiguration = (input as any).proxy ? await Apify.createProxyConfiguration((input as any).proxy) : undefined;
+        const proxyConfiguration = proxy ? await Apify.createProxyConfiguration(proxy) : undefined;
 
         const preNavigationHooks = [
             async (context: RequestContext) => {
@@ -137,10 +143,18 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
                 if ('page' in context) {
                     context.page.on('response', async (response) => {
                         try {
-                            const additionalSize = Math.floor((await response.body()).length / 1000);
+                            const html = await response.body();
+                            const additionalSize = Math.floor(html.length / 1000);
                             context.request.userData.sizeInKb += additionalSize;
+
                             if (trailId) {
                                 storesApi.get().trails.add(`${trailId}.stats.sizeInKb`, additionalSize);
+
+                                if (storeRequestsBodiesToKV) {
+                                    if (html) {
+                                        await storesApi.get().responseBodies.set(`${trailId}_${context.request.id}`, html, { contentType: 'text/html' });
+                                    }
+                                }
                             }
                         } catch (error) {
                             // Fails on redirect, silently.
@@ -150,10 +164,18 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
 
                 if ('$' in context) {
                     try {
-                        const additionalSize = Math.floor(context.$.html().length / 1000);
+                        const html = context.$.html();
+                        const additionalSize = Math.floor(html.length / 1000);
                         context.request.userData.sizeInKb += additionalSize;
+
                         if (trailId) {
                             storesApi.get().trails.add(`${trailId}.stats.sizeInKb`, additionalSize);
+
+                            if (storeRequestsBodiesToKV) {
+                                if (html) {
+                                    await storesApi.get().responseBodies.set(`${trailId}_${context.request.id}`, html, { contentType: 'text/html' });
+                                }
+                            }
                         }
                     } catch (error) {
                         // Fails on redirect, silently.
@@ -178,6 +200,15 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
                 logTrailHistory(context);
             },
         ];
+
+        // const browserPoolOptions = {
+        //     preLaunchHooks: [(_, launchContext) => {
+        //         if (storeRequestsTracesToKV) {
+        //             launchContext.tracing.start({ screenshots: true, snapshots: true });
+        //         }
+        //     }]
+
+        // };
 
         const handlePageFunction = async (context: RequestContext) => {
             const { type } = context.request?.userData || {};

@@ -88,13 +88,17 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
             },
             // utils
             log: this.log.cloneWithSuffix(getTrailId() ? `${getTrailId()}:${context?.request?.id}` : ''),
-            absoluteUrl: (path: string) => resolveUrl(path, context.request.loadedUrl),
+            absoluteUrl: (path: string) => resolveUrl(path, context.request.loadedUrl !== 'about:blank' ? context.request.loadedUrl : context.request.url),
             // request
-            async addEntryRequest(routeName: string, query: any, request: RequestSource) {
-                // Store the trail
-                const trailData = { query, requests: {}, stats: { startedAt: new Date().toISOString() } };
-                const trailId = craftUIDKey('trail_');
-                this.store.trails.set(trailId, trailData);
+            async addEntryRequest(routeName: string, query: any, request: RequestSource, options: { trailId?: string } = {}) {
+                let trailId = options?.trailId;
+
+                if (!trailId) {
+                    // Store the trail
+                    const trailData = { query, requests: {}, stats: { startedAt: new Date().toISOString() } };
+                    trailId = craftUIDKey('trail_');
+                    this.store.trails.set(trailId, trailData);
+                }
 
                 // Pass on data for the control
                 return api.queue.addRaw(extendRequest(request, { type: routeName, trailId }));

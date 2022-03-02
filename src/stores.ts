@@ -1,16 +1,20 @@
 /* eslint-disable no-underscore-dangle */
 import Apify from 'apify';
 import Store from './store';
+import FileStore from './file-store';
 import ObservableStore from './observable-store';
 import Logger from './logger';
 
+export type AnyStore = Store | FileStore
 export type StoresList = {
     state?: Store,
     trails?: Store,
     handlers?: Store,
     statuses?: ObservableStore,
     incorrectDataset?: ObservableStore,
-    [storeName: string]: Store
+    responseBodies?: FileStore,
+    browserTraces?: FileStore,
+    [storeName: string]: AnyStore
 };
 
 // Stores are declared globally
@@ -22,7 +26,7 @@ export default {
     id: 'stores',
     log: new Logger({ id: 'stores' }),
 
-    add(store: Store) {
+    add(store: Store | FileStore) {
         storage[store.name] = store;
     },
 
@@ -37,6 +41,8 @@ export default {
             this.add(new Store({ name: 'trails' }));
             this.add(new Store({ name: 'statuses' }));
             this.add(new Store({ name: 'incorrectDataset' }));
+            this.add(new FileStore({ name: 'responseBodies' }));
+            this.add(new FileStore({ name: 'browserTraces' }));
 
             await Promise.allSettled(Object.values(storage).map((store) => store.init()));
 
@@ -72,6 +78,6 @@ export default {
     },
 
     async persist() {
-        return Promise.allSettled(Object.values(storage).map((store) => store.persist()));
+        return Promise.allSettled(Object.values(storage).map((store) => Promise.resolve('persist' in store ? store.persist() : undefined)));
     },
 };
