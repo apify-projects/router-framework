@@ -108,7 +108,7 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
         // Extends it first with router
         api = {
             ...api,
-            ...(this.router.extendRouteApi(context, api) || {}),
+            ...(this.router ? this.router.extendRouteApi(context, api) || {} : {}),
         };
 
         return {
