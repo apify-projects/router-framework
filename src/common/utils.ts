@@ -27,11 +27,11 @@ export const keyedObjectToArray = (keyedObject: Record<string, any>) => Object.v
 
 export const extendRequest = (request: any, data: any) => {
     return {
-        ...request,
+        ...(request || {}),
         userData: {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ...((request as any).userData || {}),
-            ...data,
+            ...((request as any)?.userData || {}),
+            ...(data || {}),
         },
     };
 };
@@ -45,7 +45,6 @@ export const resolveUrl = (path: string, url: string): string | void => {
         const link = new URL(path, url);
         return link.href;
     } catch (error) {
-        console.log('error', error, path, url);
         // fail silently, return undefined
     }
 };
