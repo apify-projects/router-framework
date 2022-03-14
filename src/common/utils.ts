@@ -40,9 +40,9 @@ export const randomNumberBetween = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-export const resolveUrl = (path: string, url: string): string | void => {
+export const resolveUrl = (absoluteUrl: string, relativeUrl: string): string | void => {
     try {
-        const link = new URL(path, url);
+        const link = new URL(absoluteUrl, relativeUrl);
         return link.href;
     } catch (error) {
         // fail silently, return undefined
