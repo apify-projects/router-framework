@@ -65,6 +65,19 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
     makeApi(context: RequestContext, routerData: RouterData = {}) {
         const getTrailId = () => context?.request?.userData?.trailId;
 
+        const prepareEntryRequest = (routeName: string, query: any, request: RequestSource, options: { trailId?: string } = {}) => {
+            let trailId = options?.trailId;
+
+            if (!trailId) {
+                // Store the trail
+                const trailData = { query, requests: {}, stats: { startedAt: new Date().toISOString() } };
+                trailId = craftUIDKey('trail_');
+                this.store.trails.set(trailId, trailData);
+            }
+
+            return extendRequest(request, { type: routeName, trailId });
+        };
+
         let api = {
             // main api
             store: this.store,
@@ -91,17 +104,10 @@ class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = strin
             absoluteUrl: (path: string) => resolveUrl(path, context.request.loadedUrl !== 'about:blank' ? context.request.loadedUrl : context.request.url),
             // request
             async addEntryRequest(routeName: string, query: any, request: RequestSource, options: { trailId?: string } = {}) {
-                let trailId = options?.trailId;
-
-                if (!trailId) {
-                    // Store the trail
-                    const trailData = { query, requests: {}, stats: { startedAt: new Date().toISOString() } };
-                    trailId = craftUIDKey('trail_');
-                    this.store.trails.set(trailId, trailData);
-                }
-
-                // Pass on data for the control
-                return api.queue.addRaw(extendRequest(request, { type: routeName, trailId }));
+                return api.queue.addRaw(prepareEntryRequest(routeName, query, request, options));
+            },
+            async addSerialEntryRequest(routeName: string, query: any, request: RequestSource, options: { trailId?: string } = {}) {
+                this.store.state.push('serial-queue', prepareEntryRequest(routeName, query, request, options));
             },
         };
 

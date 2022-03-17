@@ -60,6 +60,20 @@ export default class Store {
         this.set(key, +(this.get(key) || 0) - nb);
     }
 
+    pop(key: string) {
+        const items = this.get(key) || [];
+        const item = items.pop();
+        this.set(key, items);
+        return item;
+    }
+
+    shift(key: string) {
+        const items = this.get(key) || [];
+        const item = items.shift();
+        this.set(key, items);
+        return item;
+    }
+
     push(key: string, data: any) {
         this.set(key, [...(this.get(key) || []), data]);
     }
