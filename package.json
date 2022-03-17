@@ -1,6 +1,6 @@
 {
   "name": "@apify-projects/router-framework",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Router-based framework for multi-site scraper flow management",
   "repository": {
     "type": "git",
