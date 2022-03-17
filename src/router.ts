@@ -235,7 +235,7 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
         /**
          * Run async requests
          */
-        if (!requestQueue.isEmpty()) {
+        if (!await requestQueue.isEmpty()) {
             (crawler as any).isRunningPromise = null;
             await crawler.run();
         }
