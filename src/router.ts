@@ -140,13 +140,8 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
                 context.request.userData.sizeInKb = 0;
                 logTrailHistory(context);
 
-                context.page.on('response', async (response) => {
+                const handleResponseHtml = async (html: any) => {
                     try {
-                        let html;
-
-                        if ('page' in context) html = await response.body();
-                        if ('$' in context) html = context.$.html();
-
                         if (html) {
                             const additionalSize = Math.floor(html.length / 1000);
                             context.request.userData.sizeInKb += additionalSize;
@@ -164,7 +159,15 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
                     } catch (error) {
                         // Fails on redirect, silently.
                     }
-                });
+                };
+
+                if ('page' in context) {
+                    context.page.on('response', async (response) => handleResponseHtml(await response.body()));
+                }
+
+                if ('$' in context) {
+                    handleResponseHtml(context.$.html());
+                }
             },
         ];
 
