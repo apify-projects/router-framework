@@ -140,10 +140,14 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
                 context.request.userData.sizeInKb = 0;
                 logTrailHistory(context);
 
-                if ('page' in context) {
-                    context.page.on('response', async (response) => {
-                        try {
-                            const html = await response.body();
+                context.page.on('response', async (response) => {
+                    try {
+                        let html;
+
+                        if ('page' in context) html = await response.body();
+                        if ('$' in context) html = context.$.html();
+
+                        if (html) {
                             const additionalSize = Math.floor(html.length / 1000);
                             context.request.userData.sizeInKb += additionalSize;
 
@@ -156,31 +160,11 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
                                     }
                                 }
                             }
-                        } catch (error) {
-                            // Fails on redirect, silently.
-                        }
-                    });
-                };
-
-                if ('$' in context) {
-                    try {
-                        const html = context.$.html();
-                        const additionalSize = Math.floor(html.length / 1000);
-                        context.request.userData.sizeInKb += additionalSize;
-
-                        if (trailId) {
-                            storesApi.get().trails.add(`${trailId}.stats.sizeInKb`, additionalSize);
-
-                            if (storeRequestsBodiesToKV) {
-                                if (html) {
-                                    await storesApi.get().responseBodies.set(`${trailId}_${context.request.id}`, html, { contentType: 'text/html' });
-                                }
-                            }
                         }
                     } catch (error) {
                         // Fails on redirect, silently.
                     }
-                }
+                });
             },
         ];
 
@@ -200,15 +184,6 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
                 logTrailHistory(context);
             },
         ];
-
-        // const browserPoolOptions = {
-        //     preLaunchHooks: [(_, launchContext) => {
-        //         if (storeRequestsTracesToKV) {
-        //             launchContext.tracing.start({ screenshots: true, snapshots: true });
-        //         }
-        //     }]
-
-        // };
 
         const handlePageFunction = async (context: RequestContext) => {
             const { type } = context.request?.userData || {};
@@ -235,18 +210,17 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
             await route.failHandler(context, route.makeApi(context, routerData));
         };
 
-        // Don't get startled by this crawler function
-        // I came up with this idea of the user providing its crawler while passing
-        // our key params { requestQueue, handlePageFunction, handleFailedRequestFunction }
-        // Will need to assess and improve this later.
-        const crawler = await Promise.resolve(this.crawler({
-            requestQueue: await Apify.openRequestQueue(),
-            handlePageFunction,
-            handleFailedRequestFunction,
-            proxyConfiguration,
-            preNavigationHooks,
-            postNavigationHooks,
-        }));
+        const requestQueue = await Apify.openRequestQueue();
+        const crawler = await Promise.resolve(
+            this.crawler({
+                requestQueue,
+                handlePageFunction,
+                handleFailedRequestFunction,
+                proxyConfiguration,
+                preNavigationHooks,
+                postNavigationHooks,
+            }),
+        );
 
         // Hook to help with preparing the queue
         // Given a polyfilled requestQueue and the input data
@@ -255,8 +229,24 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
 
         await this._runHook(HOOK.QUEUE_STARTED, undefined, routerData);
 
-        // Run the crawler
-        await crawler.run();
+        /**
+         * Run async requests
+         */
+        if (!requestQueue.isEmpty()) {
+            (crawler as any).isRunningPromise = null;
+            await crawler.run();
+        }
+
+        /**
+         * Run the serial requests
+         */
+        while ((storesApi.get().state.get('serial-queue') || []).length) {
+            const serialRequest = storesApi.get().state.shift('serial-queue');
+            this.log.info(`Starting a new serial request`, { serialRequest });
+            await requestQueue.addRequest(serialRequest);
+            (crawler as any).isRunningPromise = null;
+            await crawler.run();
+        }
 
         await storesApi.closing();
 

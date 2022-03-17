@@ -67,6 +67,7 @@ export type ApiProxy = {
     log: import('../logger').default,
     absoluteUrl(path: string): string | void,
     addEntryRequest: (routeName: string, query: any, request: RequestSource, options?: { trailId?: string }) => Promise<QueueOperationInfo[]>;
+    addSerialEntryRequest: (routeName: string, query: any, request: RequestSource, options?: { trailId?: string }) => Promise<void>;
 }
 
 export type OmitGloblalApi<T> = Omit<T, 'store' | 'router' | 'dataset' | 'queue' | 'trail'>;
