@@ -141,28 +141,32 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
                 logTrailHistory(context);
 
                 const handleResponseHtml = async (html: any) => {
-                    try {
-                        if (html) {
-                            const additionalSize = Math.floor(html.length / 1000);
-                            context.request.userData.sizeInKb += additionalSize;
+                    if (html) {
+                        const additionalSize = Math.floor(html.length / 1000);
+                        context.request.userData.sizeInKb += additionalSize;
 
-                            if (trailId) {
-                                storesApi.get().trails.add(`${trailId}.stats.sizeInKb`, additionalSize);
+                        if (trailId) {
+                            storesApi.get().trails.add(`${trailId}.stats.sizeInKb`, additionalSize);
 
-                                if (storeRequestsBodiesToKV) {
-                                    if (html) {
-                                        await storesApi.get().responseBodies.set(`${trailId}_${context.request.id}`, html, { contentType: 'text/html' });
-                                    }
+                            if (storeRequestsBodiesToKV) {
+                                if (html) {
+                                    await storesApi.get().responseBodies.set(`${trailId}_${context.request.id}`, html, { contentType: 'text/html' });
                                 }
                             }
                         }
-                    } catch (error) {
-                        // Fails on redirect, silently.
                     }
                 };
 
                 if ('page' in context) {
-                    context.page.on('response', async (response) => handleResponseHtml(await response.body()));
+                    context.page.on('response', async (response) => {
+                        try {
+                            if (response.status() < 300 && response.status() >= 399) {
+                                handleResponseHtml(await response.body());
+                            }
+                        } catch (error) {
+                            // Fails on redirect, silently.
+                        }
+                    });
                 }
 
                 if ('$' in context) {
