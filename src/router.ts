@@ -214,7 +214,8 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
         };
 
         const requestQueue = await Apify.openRequestQueue();
-        const crawler = await Promise.resolve(
+
+        const getCrawler = () => Promise.resolve(
             this.crawler({
                 requestQueue,
                 handlePageFunction,
@@ -236,8 +237,7 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
          * Run async requests
          */
         if (!await requestQueue.isEmpty()) {
-            (crawler as any).isRunningPromise = null;
-            await crawler.run();
+            await getCrawler().then((crawler) => crawler.run());
         }
 
         /**
@@ -247,8 +247,7 @@ export default class Router<Methods = RouterHandlerDefaultMethods> {
             const serialRequest = storesApi.get().state.shift('serial-queue');
             this.log.info(`Starting a new serial request`, { serialRequest });
             await requestQueue.addRequest(serialRequest);
-            (crawler as any).isRunningPromise = null;
-            await crawler.run();
+            await getCrawler().then((crawler) => crawler.run());
         }
 
         await storesApi.closing();
