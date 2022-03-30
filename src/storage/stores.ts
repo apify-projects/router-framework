@@ -3,7 +3,7 @@ import Apify from 'apify';
 import Store from './store';
 import FileStore from './file-store';
 import ObservableStore from './observable-store';
-import Logger from './logger';
+import Logger from '../logger';
 
 export type AnyStore = Store | FileStore
 export type StoresList = {

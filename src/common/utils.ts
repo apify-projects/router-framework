@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { customAlphabet } from 'nanoid';
 import { URL } from 'url';
-import { UID_KEY_PREFIX } from '../consts';
+import { UID_KEY_PREFIX } from './consts';
 
 const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
 const uidPartLength = 2;
@@ -47,4 +47,35 @@ export const resolveUrl = (absoluteUrl: string, relativeUrl: string): string | v
     } catch (error) {
         // fail silently, return undefined
     }
+};
+
+export const pathify = (...args: string[]) => args.filter(Boolean).join('.');
+
+export const intersect = (arrayA: string[], arrayB: string[]) => arrayA.filter((item) => arrayB.includes(item));
+
+export const difference = (arrayA: string[], arrayB: string[]) => arrayA.filter((item) => !arrayB.includes(item));
+
+export const isNumberPredicate = (nb: number) => !Number.isNaN(+nb);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const concatAsUniqueArray = (...arrs: any[]) => [...new Set([].concat(...arrs.filter((item) => Array.isArray(item))))];
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const orderByClosestLength = (text: string, list: any[], matcher: (item: any) => string = (item) => (item as string)) => {
+    const { length } = text;
+    const distances: Record<number, string[]> = {};
+    for (const item of list) {
+        const distance = Math.abs(length - matcher(item).length);
+        if (distances[distance]) {
+            distances[distance].push(item);
+        } else {
+            distances[distance] = [item];
+        }
+    }
+    const orderedDistances = Object.keys(distances).sort((a, b) => +a - +b);
+    const orderedItems = orderedDistances.reduce((acc, distance) => {
+        acc.push(...distances[distance]);
+        return acc;
+    }, []);
+    return orderedItems;
 };

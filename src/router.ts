@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Apify from 'apify';
 import { ApiProxy, CrawlerType, RequestContext, RouterData, RouterHandlerDefaultMethods, RouterRunOptions } from './common/types';
-import { HOOK } from './consts';
+import { HOOK } from './common/consts';
 import DataValidator from './data-validator';
 import Hook from './hook';
 import Logger from './logger';
 import Route from './route';
-import Store from './store';
-import storesApi from './stores';
+import Store from './storage/store';
+import storesApi from './storage/stores';
 
 export type RouterOptions<Methods = RouterHandlerDefaultMethods> = {
     key?: string,

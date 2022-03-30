@@ -48,7 +48,7 @@ export type RouterData = {
 }
 
 export type ApiProxy = {
-    store: import('../stores').StoresList,
+    store: import('../storage/stores').StoresList,
     dataset: import('../dataset').default,
     queue: import('../queue').default,
     router: import('../router').default,
@@ -149,3 +149,45 @@ export type CrawlerType = (options: UnknownObject) => Promise<{ run: () => Promi
 export type ResolverFn<T = undefined> = (value?: T) => void;
 
 export type WatcherFunction = (currentValue: any, resolve: ResolverFn) => void
+
+// use-trail.ts
+
+export type Merge<T1, T2, K extends keyof T2> = Omit<T1, K> & Pick<T2, K>;
+export type PartialRequired<T, K extends keyof T> = Required<Pick<T, K>> & Partial<Omit<T, K>>
+
+export type MakeReference<NewReference> = NewReference & Partial<BaseReference>
+
+export type UniqueKey = string
+export type BaseReference = { identifiers: string[] };
+export type RequestReference = MakeReference<{ requestKey: UniqueKey }>;
+
+// trail-state.ts
+
+export type DataModelPathsOptions = {
+    name: string,
+    path?: string,
+    referenceKey?: string,
+};
+
+export type StateMethodsDefinition = {
+    name: string,
+    referenceKey: string,
+    sortBy?: (keyedResults: Record<string, any>, order?: string) => string[],
+    getItemKeyValues?: (item: Record<string, any>) => Record<string, any>,
+    getIdentifiersFromItem?: (item: Record<string, any>) => string[],
+    getMaxItems?: (...args: any[]) => number,
+    getSortingOrder?: (...args: any[]) => 'first' | 'last',
+    validateItem?: (item: Record<string, any>) => boolean,
+    updateMerger?: (item: Record<string, any>, newItem: Record<string, any>) => Record<string, any>,
+};
+
+export type ValidationOptions = {
+    logError?: boolean,
+    throwError?: boolean,
+    partial?: boolean,
+};
+
+export type StatusType = {
+    done?: boolean,
+    success?: boolean,
+};

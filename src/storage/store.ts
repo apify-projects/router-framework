@@ -5,9 +5,9 @@ import getByKey from 'lodash.get';
 import hasByPath from 'lodash.has';
 import cloneDeep from 'lodash.clonedeep';
 import mergeWith from 'lodash.mergewith';
-import { craftUIDKey } from './common/utils';
-import Logger from './logger';
-import { StoreOptions } from './common/types';
+import { craftUIDKey } from '../common/utils';
+import Logger from '../logger';
+import { StoreOptions } from '../common/types';
 
 export default class Store {
     name: string;

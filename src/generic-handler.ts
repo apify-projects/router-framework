@@ -6,7 +6,7 @@ import Dataset from './dataset';
 import Logger from './logger';
 import Queue from './queue';
 import Router from './router';
-import storesApi, { StoresList } from './stores';
+import storesApi, { StoresList } from './storage/stores';
 
 class GenericHandler<Methods = RouterHandlerDefaultMethods, AllowedNames = string> {
     uid!: string;

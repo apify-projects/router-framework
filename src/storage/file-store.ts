@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Apify from 'apify';
-import { FileStoreOptions } from './common/types';
-import Logger from './logger';
+import { FileStoreOptions } from '../common/types';
+import Logger from '../logger';
 
 export default class FileStore {
     name: string;

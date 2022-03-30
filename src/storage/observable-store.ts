@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ObservableSlim from 'observable-slim';
 import EventEmitter from 'events';
-import { StoreOptions, WatcherFunction } from './common/types';
+import { StoreOptions, WatcherFunction } from '../common/types';
 import Store from './store';
-import { craftUID } from './common/utils';
+import { craftUID } from '../common/utils';
 
 export default class ObservableStore extends Store {
     private _watchersKeyByPath: Record<string, string[]>;

@@ -19,6 +19,10 @@ const HOOK = {
     QUEUE_ENDED: 'QUEUE_ENDED',
 };
 
+export const INPUT_DATA_KEY = 'input';
+export const OUTPUT_DATA_KEY = 'output';
+export const DATA_STATUSES_KEY = 'statuses';
+
 const WAIT_FOR_ELEMENT_TIMEOUT = 10000;
 
 export {
